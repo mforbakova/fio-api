@@ -9,7 +9,6 @@ use Exception;
 
 class SendMoney
 {
-    private string $accountTo;
     public string $client;
     private string $uploadUrl;
 
@@ -17,19 +16,20 @@ class SendMoney
     {
     }
 
-    public function sendMoney($accountTo, $number): void
+    public function sendMoney($accountFrom, $accountTo, $number): void
     {
-        $this->accountTo = $accountTo;
-        $array = explode("/", $accountTo);
-        $accountTo = $array[0];
-        $bankCode = $array[1];
+        $arrayFrom = explode("/", $accountFrom);
+        $accountFrom = $arrayFrom[0];
+        $arrayTo = explode("/", $accountTo);
+        $accountTo = $arrayTo[0];
+        $bankCode = $arrayTo[1];
 
         $number = number_format($number, 2, '.', '');
 
         $xml = new GetXML();
         $xml->setTodayDate();
         $xml->setAmount($number);
-        $xml->setBankAccountFrom('2402283612'); // Fio účet
+        $xml->setBankAccountFrom($accountFrom);
         $xml->setBankAccountTo($accountTo);
         $xml->setBankCode($bankCode);
         // $xml->setBankCode($code);
@@ -71,10 +71,9 @@ class SendMoney
         );
 
         // var_dump($client->http_response_code('POST'));
-        
-        
+
         $responseXml = simplexml_load_string((string) $response->getBody());
-        
+
         $status = (string) $responseXml->result->status;
         if ($status === 'error') {
             throw new Exception((string) $responseXml->result->message);

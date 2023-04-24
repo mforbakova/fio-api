@@ -17,27 +17,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     try
     { 
-        if(!is_numeric($_POST['amount']) && !is_numeric($_POST['account']) && null == ($_POST['amount']))
+        if(!is_numeric($_POST['sender']) && !is_numeric($_POST['amount']) && !is_numeric($_POST['account']) && null == ($_POST['amount']))
         {
             throw new Exception('Zadaná nečíselná hodnota!');
         }
         
-        if(preg_match('/((([0-9]){0,7}-?[0-9]){10,10}\/([0-9]){4,4})/', str_replace(' ', '', $_POST['account'])))
-        {
-            $account = $_POST['account'];   //2102188963/2010
+        if(preg_match('/(([0-9]){10,10}\/([2][0][1][0]))$/', $_POST['sender'])) {
+            $accountFrom = $_POST['sender'];
+
+            if(preg_match('/((([0-9]){0,7}-?[0-9]){10,10}\/([0-9]){4,4})/', str_replace(' ', '', $_POST['account'])))
+            {
+            $account = $_POST['account'];
             $amount = trim($_POST['amount']);
             $sendMoney = new SendMoney();
-            $sendMoney->sendMoney($account, $amount);
+            $sendMoney->sendMoney($accountFrom, $account, $amount);
             echo "Peniaze odoslané";
+            }
         }
-        else
-        {
+        else {
             throw new Exception('Neplatné číslo účtu');
         }        
     }
 
-    catch (Exception $e)
-    {
+    catch (Exception $e) {
         $error= $e->getMessage();
     };
 }
@@ -67,9 +69,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <h2 class="error text-danger ms-4"><?= $error ?></h2>
                 <div class="col-sm-6 m-5">
                     <form action="index.php" method="post" class="shadow p-3 mb-5 bg-body rounded"><br>
+                        Z účtu:<br />
+                        <p class="small">Zadávajte číslo účtu vo formáte: "xxxxxxxxxx/2010"</p>
+                        <input type="text" name="sender"><br /><br />
                         Na účet:<br />
                         <p class="small">Zadávajte číslo účtu vo formáte: "xxxxxxxxxx/xxxx" alebo s predčíslím</p>
-                        <input type="text" name="account"><br />
+                        <input type="text" name="account"><br /><br />
                         Koľko kč chcete poslať? <br />
                         <input type="number" name="amount"><br /><br />
                         <input type="submit">
