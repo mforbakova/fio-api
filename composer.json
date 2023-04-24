@@ -1,0 +1,21 @@
+{
+    "name": "mforbakova/fio-api",
+    "require": {
+        "guzzlehttp/guzzle": "^7.5",
+        "symfony/dotenv": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Monika Forbaková",
+            "email": "mforbakova@office.web-tech.sk"
+        }
+    ],
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7"
+    }
+}
